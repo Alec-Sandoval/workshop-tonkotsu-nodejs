@@ -1,13 +1,13 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Production
+name: Node.js CI
 
 on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, feature/* ]
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [12.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -29,3 +29,11 @@ jobs:
     - run: npm test
       env:
         CI: true
+
+    - name: Azure WebApp
+      uses: Azure/webapps-deploy@v2
+      with:
+        # Name of the Azure Web App
+        app-name: github-verification-team5
+        # Applies to Web App only: Publish profile (*.publishsettings) file contents with Web Deploy secrets
+        publish-profile: ${{ secrets.AZURE_CREDENTIALS_PRODUCTION }}
